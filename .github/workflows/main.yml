@@ -1,1 +1,28 @@
-
+name: Teste Integração
+on:
+    push:
+        branches:
+        - main  
+jobs:
+    build-test:
+        runs-on: ubuntu-latest
+        services:
+            db:
+                image: postgres:16.3
+                ports:
+                    - 5432:5432
+                env:
+                    POSTGRES_USER: review
+                    POSTGRES_PASSWORD: Passw0rd2023!
+                    POSTGRES_DB: review
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v4
+              with:
+                dotnet-version: 8.0.x
+            - name: Teste de Integração
+              env:
+                ConnectionStrings__DefaultConnection: "Host=localhost;Database=review;Username=review;Password=Passw0rd2023!"
+              run: dotnet test ./src/Review-Filmes.Test.Integration/Review-Filmes.Test.Integration.csproj --verbosity normal 
